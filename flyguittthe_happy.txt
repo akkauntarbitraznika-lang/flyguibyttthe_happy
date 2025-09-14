@@ -1,21 +1,13 @@
---[[
-	Этот скрипт объединяет:
-	1. Работающую логику из вашего первого скрипта.
-	2. Улучшенный визуал из второго скрипта.
-]]
-
 local main = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local up = Instance.new("TextButton")
 local down = Instance.new("TextButton")
 local onof = Instance.new("TextButton")
 local TextLabel = Instance.new("TextLabel")
-local plus = Instance.new("TextButton")
-local speed = Instance.new("TextLabel")
-local mine = Instance.new("TextButton")
 local closebutton = Instance.new("TextButton")
 local mini = Instance.new("TextButton")
 local mini2 = Instance.new("TextButton")
+local SpeedSlider = Instance.new("Slider") -- Добавляем ползунок
 
 main.Name = "main"
 main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -27,7 +19,7 @@ Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 Frame.BorderSizePixel = 2
 Frame.Position = UDim2.new(0.100320168, 0, 0.379746825, 0)
-Frame.Size = UDim2.new(0, 250, 0, 150)
+Frame.Size = UDim2.new(0, 250, 0, 180) -- Увеличим высоту для ползунка
 Frame.Active = true
 Frame.Draggable = true
 
@@ -76,7 +68,7 @@ mini2.ZIndex = 2
 onof.Name = "onof"
 onof.Parent = Frame
 onof.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-onof.Position = UDim2.new(0.05, 0, 0.25, 0)
+onof.Position = UDim2.new(0.05, 0, 0.2, 0) -- Сдвинуто вверх
 onof.Size = UDim2.new(0.9, 0, 0.2, 0)
 onof.Font = Enum.Font.SourceSansBold
 onof.Text = "FLY (ВЫКЛ)"
@@ -86,60 +78,40 @@ onof.TextSize = 18.000
 up.Name = "up"
 up.Parent = Frame
 up.BackgroundColor3 = Color3.fromRGB(50, 150, 200)
-up.Position = UDim2.new(0.05, 0, 0.5, 0)
+up.Position = UDim2.new(0.05, 0, 0.42, 0) -- Новая позиция
 up.Size = UDim2.new(0.4, 0, 0.2, 0)
 up.Font = Enum.Font.SourceSansBold
-up.Text = "ВВЕРХ"
+up.Text = "▲" -- Визуальное изменение
 up.TextColor3 = Color3.fromRGB(255, 255, 255)
-up.TextSize = 18.000
+up.TextSize = 24.000 -- Увеличим размер текста для иконки
 
 down.Name = "down"
 down.Parent = Frame
 down.BackgroundColor3 = Color3.fromRGB(200, 150, 50)
-down.Position = UDim2.new(0.55, 0, 0.5, 0)
+down.Position = UDim2.new(0.55, 0, 0.42, 0) -- Новая позиция
 down.Size = UDim2.new(0.4, 0, 0.2, 0)
 down.Font = Enum.Font.SourceSansBold
-down.Text = "ВНИЗ"
+down.Text = "▼" -- Визуальное изменение
 down.TextColor3 = Color3.fromRGB(255, 255, 255)
-down.TextSize = 18.000
+down.TextSize = 24.000 -- Увеличим размер текста для иконки
 
-plus.Name = "plus"
-plus.Parent = Frame
-plus.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
-plus.Position = UDim2.new(0.75, 0, 0.75, 0)
-plus.Size = UDim2.new(0.2, 0, 0.2, 0)
-plus.Font = Enum.Font.SourceSansBold
-plus.Text = "+"
-plus.TextColor3 = Color3.fromRGB(255, 255, 255)
-plus.TextScaled = true
-plus.TextSize = 14.000
-plus.TextWrapped = true
+-- Удаляем plus, mine, speed
 
-mine.Name = "mine"
-mine.Parent = Frame
-mine.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-mine.Position = UDim2.new(0.05, 0, 0.75, 0)
-mine.Size = UDim2.new(0.2, 0, 0.2, 0)
-mine.Font = Enum.Font.SourceSansBold
-mine.Text = "-"
-mine.TextColor3 = Color3.fromRGB(255, 255, 255)
-mine.TextScaled = true
-mine.TextSize = 14.000
-mine.TextWrapped = true
+-- Настройка ползунка
+SpeedSlider.Name = "SpeedSlider"
+SpeedSlider.Parent = Frame
+SpeedSlider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+SpeedSlider.BorderColor3 = Color3.fromRGB(0, 0, 0)
+SpeedSlider.BorderSizePixel = 1
+SpeedSlider.Position = UDim2.new(0.05, 0, 0.68, 0) -- Позиция ползунка
+SpeedSlider.Size = UDim2.new(0.9, 0, 0.15, 0)
+SpeedSlider.Min = 1
+SpeedSlider.Max = 10
+SpeedSlider.Value = 1 -- Начальное значение скорости
+SpeedSlider.SliderColor = Color3.fromRGB(50, 200, 50) -- Цвет ползунка
+SpeedSlider.ShowValue = true -- Показать текущее значение
 
-speed.Name = "speed"
-speed.Parent = Frame
-speed.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-speed.Position = UDim2.new(0.25, 0, 0.75, 0)
-speed.Size = UDim2.new(0.5, 0, 0.2, 0)
-speed.Font = Enum.Font.SourceSansBold
-speed.Text = "1"
-speed.TextColor3 = Color3.fromRGB(255, 255, 255)
-speed.TextScaled = true
-speed.TextSize = 14.000
-speed.TextWrapped = true
-
-speeds = 1
+local speeds = 1 -- Переменная speeds, теперь управляется ползунком
 
 local speaker = game:GetService("Players").LocalPlayer
 local chr = game.Players.LocalPlayer.Character
@@ -367,9 +339,9 @@ game:GetService("Players").LocalPlayer.CharacterAdded:Connect(function(char)
 	game.Players.LocalPlayer.Character.Animate.Disabled = false
 end)
 
-plus.MouseButton1Down:connect(function()
-	speeds = speeds + 1
-	speed.Text = speeds
+-- Обработка изменения значения ползунка
+SpeedSlider.Changed:Connect(function()
+	speeds = math.round(SpeedSlider.Value) -- Округляем до целого числа
 	if nowe == true then
 		tpwalking = false
 		for i = 1, speeds do
@@ -388,32 +360,6 @@ plus.MouseButton1Down:connect(function()
 	end
 end)
 
-mine.MouseButton1Down:connect(function()
-	if speeds == 1 then
-		speed.Text = 'cannot be less than 1'
-		wait(1)
-		speed.Text = speeds
-	else
-		speeds = speeds - 1
-		speed.Text = speeds
-		if nowe == true then
-			tpwalking = false
-			for i = 1, speeds do
-				spawn(function()
-					local hb = game:GetService("RunService").Heartbeat
-					tpwalking = true
-					local chr = game.Players.LocalPlayer.Character
-					local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
-					while tpwalking and hb:Wait() and chr and hum and hum.Parent do
-						if hum.MoveDirection.Magnitude > 0 then
-							chr:TranslateBy(hum.MoveDirection)
-						end
-					end
-				end)
-			end
-		end
-	end
-end)
 
 closebutton.MouseButton1Click:Connect(function()
 	main:Destroy()
@@ -423,9 +369,7 @@ mini.MouseButton1Click:Connect(function()
 	up.Visible = false
 	down.Visible = false
 	onof.Visible = false
-	plus.Visible = false
-	speed.Visible = false
-	mine.Visible = false
+	SpeedSlider.Visible = false -- Скрываем ползунок
 	mini.Visible = false
 	mini2.Visible = true
 	Frame.BackgroundTransparency = 1
@@ -438,13 +382,11 @@ mini2.MouseButton1Click:Connect(function()
 	up.Visible = true
 	down.Visible = true
 	onof.Visible = true
-	plus.Visible = true
-	speed.Visible = true
-	mine.Visible = true
+	SpeedSlider.Visible = true -- Показываем ползунок
 	mini.Visible = true
 	mini2.Visible = false
 	Frame.BackgroundTransparency = 0
 	closebutton.Position = UDim2.new(1, -30, 0, 0)
 	mini2.Position = UDim2.new(1, -60, 0, 0)
-	Frame.Size = UDim2.new(0, 250, 0, 150)
+	Frame.Size = UDim2.new(0, 250, 0, 180) -- Возвращаем увеличенную высоту
 end)
