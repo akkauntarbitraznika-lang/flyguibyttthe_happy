@@ -17,135 +17,129 @@ main.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 main.ResetOnSpawn = false
 
 Frame.Parent = main
-Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30) -- Темный фон для минимализма
-Frame.BorderColor3 = Color3.fromRGB(50, 50, 50) -- Более мягкая граница
+Frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Стильный серый фон
+Frame.BorderColor3 = Color3.fromRGB(70, 70, 70) -- Более темный серый для границы
 Frame.BorderSizePixel = 1
 Frame.Position = UDim2.new(0.100320168, 0, 0.379746825, 0)
-Frame.Size = UDim2.new(0, 180, 0, 150) -- Уменьшаем размер для минимализма
+Frame.Size = UDim2.new(0, 250, 0, 150) -- Сохраняем оригинальный размер фрейма
 Frame.Active = true
 Frame.Draggable = true
 Frame.CornerRadius = UDim.new(0, 8) -- Скругленные углы
 
 TextLabel.Parent = Frame
-TextLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20) -- Еще темнее для заголовка
+TextLabel.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- Темнее серый для заголовка
 TextLabel.Position = UDim2.new(0, 0, 0, 0)
-TextLabel.Size = UDim2.new(1, 0, 0, 25) -- Меньше высота заголовка
+TextLabel.Size = UDim2.new(1, 0, 0, 30) -- Сохраняем оригинальную высоту заголовка
 TextLabel.Font = Enum.Font.SourceSansBold
-TextLabel.Text = "FLY GUI" -- Сокращенный заголовок
-TextLabel.TextColor3 = Color3.fromRGB(200, 200, 200) -- Более мягкий белый
+TextLabel.Text = "ttthe_happy" -- Новый текст заголовка
+TextLabel.TextColor3 = Color3.fromRGB(200, 200, 200) -- Светло-серый текст
 TextLabel.TextScaled = true
-TextLabel.TextSize = 16.000 -- Меньше размер текста
+TextLabel.TextSize = 18.000
 TextLabel.TextWrapped = true
 TextLabel.CornerRadius = UDim.new(0, 6) -- Скругленные углы заголовка
 
 closebutton.Name = "Close"
 closebutton.Parent = Frame
-closebutton.BackgroundColor3 = Color3.fromRGB(200, 50, 50) -- Стильный красный
+closebutton.BackgroundColor3 = Color3.fromRGB(200, 50, 50) -- Яркий красный для крестика
 closebutton.Font = "SourceSans"
-closebutton.Size = UDim2.new(0, 25, 0, 25) -- Меньше размер кнопки
+closebutton.Size = UDim2.new(0, 30, 0, 30) -- Сохраняем оригинальный размер кнопки
 closebutton.Text = "X"
-closebutton.TextColor3 = Color3.fromRGB(255, 255, 255)
-closebutton.TextSize = 20
-closebutton.Position = UDim2.new(1, -25, 0, 0)
+closebutton.TextColor3 = Color3.fromRGB(255, 255, 255) -- Белый крестик
+closebutton.TextSize = 25
+closebutton.Position = UDim2.new(1, -30, 0, 0)
 closebutton.ZIndex = 2
-closebutton.CornerRadius = UDim.new(0, 6)
+closebutton.CornerRadius = UDim.new(0, 6) -- Скругленные углы
 
 mini.Name = "minimize"
 mini.Parent = Frame
-mini.BackgroundColor3 = Color3.fromRGB(70, 70, 70) -- Нейтральный серый
+mini.BackgroundColor3 = Color3.fromRGB(80, 80, 80) -- Более темный серый для кнопки
 mini.Font = "SourceSans"
-mini.Size = UDim2.new(0, 25, 0, 25)
-mini.Text = "—" -- Дефис вместо минуса
+mini.Size = UDim2.new(0, 30, 0, 30) -- Сохраняем оригинальный размер кнопки
+mini.Text = "—" -- Дефис для минимализма
 mini.TextColor3 = Color3.fromRGB(200, 200, 200)
-mini.TextSize = 20
-mini.Position = UDim2.new(1, -50, 0, 0) -- Сдвинута
+mini.TextSize = 30
+mini.Position = UDim2.new(1, -60, 0, 0)
 mini.ZIndex = 2
 mini.CornerRadius = UDim.new(0, 6)
 
 mini2.Name = "minimize2"
 mini2.Parent = Frame
-mini2.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+mini2.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 mini2.Font = "SourceSans"
-mini2.Size = UDim2.new(0, 25, 0, 25)
+mini2.Size = UDim2.new(0, 30, 0, 30)
 mini2.Text = "+"
 mini2.TextColor3 = Color3.fromRGB(200, 200, 200)
-mini2.TextSize = 20
-mini2.Position = UDim2.new(1, -50, 0, 0)
+mini2.TextSize = 30
+mini2.Position = UDim2.new(1, -60, 0, 0)
 mini2.Visible = false
 mini2.ZIndex = 2
 mini2.CornerRadius = UDim.new(0, 6)
 
 onof.Name = "onof"
 onof.Parent = Frame
-onof.BackgroundColor3 = Color3.fromRGB(50, 150, 220) -- Приглушенный синий
-onof.Position = UDim2.new(0.08, 0, 0.22, 0) -- Позиция
-onof.Size = UDim2.new(0.84, 0, 0.2, 0)
+onof.BackgroundColor3 = Color3.fromRGB(50, 150, 220) -- Голубой (для включения - зеленый)
+onof.Position = UDim2.new(0.05, 0, 0.25, 0)
+onof.Size = UDim2.new(0.9, 0, 0.2, 0)
 onof.Font = Enum.Font.SourceSansBold
-onof.Text = "FLY (OFF)" -- ENG для минимализма, или можно оставить РУС
+onof.Text = "FLY (ВЫКЛ)"
 onof.TextColor3 = Color3.fromRGB(255, 255, 255)
-onof.TextSize = 16.000
-onof.CornerRadius = UDim.new(0, 6)
+onof.TextSize = 18.000
 
 up.Name = "up"
 up.Parent = Frame
-up.BackgroundColor3 = Color3.fromRGB(70, 70, 70) -- Нейтральный серый
-up.Position = UDim2.new(0.08, 0, 0.45, 0)
-up.Size = UDim2.new(0.40, 0, 0.2, 0)
+up.BackgroundColor3 = Color3.fromRGB(60, 60, 60) -- Нейтральный серый
+up.Position = UDim2.new(0.05, 0, 0.5, 0)
+up.Size = UDim2.new(0.4, 0, 0.2, 0)
 up.Font = Enum.Font.SourceSansBold
-up.Text = "▲" -- Иконка
-up.TextColor3 = Color3.fromRGB(200, 200, 200)
-up.TextSize = 22.000
-up.CornerRadius = UDim.new(0, 6)
+up.Text = "ВВЕРХ"
+up.TextColor3 = Color3.fromRGB(255, 255, 255)
+up.TextSize = 18.000
 
 down.Name = "down"
 down.Parent = Frame
-down.BackgroundColor3 = Color3.fromRGB(70, 70, 70) -- Нейтральный серый
-down.Position = UDim2.new(0.52, 0, 0.45, 0)
-down.Size = UDim2.new(0.40, 0, 0.2, 0)
+down.BackgroundColor3 = Color3.fromRGB(60, 60, 60) -- Нейтральный серый
+down.Position = UDim2.new(0.55, 0, 0.5, 0)
+down.Size = UDim2.new(0.4, 0, 0.2, 0)
 down.Font = Enum.Font.SourceSansBold
-down.Text = "▼" -- Иконка
-down.TextColor3 = Color3.fromRGB(200, 200, 200)
-down.TextSize = 22.000
-down.CornerRadius = UDim.new(0, 6)
+down.Text = "ВНИЗ"
+down.TextColor3 = Color3.fromRGB(255, 255, 255)
+down.TextSize = 18.000
 
 plus.Name = "plus"
 plus.Parent = Frame
-plus.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-plus.Position = UDim2.new(0.70, 0, 0.70, 0) -- Изменена позиция
-plus.Size = UDim2.new(0.22, 0, 0.2, 0) -- Изменен размер
+plus.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+plus.Position = UDim2.new(0.75, 0, 0.75, 0)
+plus.Size = UDim2.new(0.2, 0, 0.2, 0)
 plus.Font = Enum.Font.SourceSansBold
 plus.Text = "+"
-plus.TextColor3 = Color3.fromRGB(200, 200, 200)
+plus.TextColor3 = Color3.fromRGB(255, 255, 255)
 plus.TextScaled = true
 plus.TextSize = 14.000
 plus.TextWrapped = true
-plus.CornerRadius = UDim.new(0, 6)
 
 mine.Name = "mine"
 mine.Parent = Frame
-mine.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-mine.Position = UDim2.new(0.08, 0, 0.70, 0) -- Изменена позиция
-mine.Size = UDim2.new(0.22, 0, 0.2, 0) -- Изменен размер
+mine.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+mine.Position = UDim2.new(0.05, 0, 0.75, 0)
+mine.Size = UDim2.new(0.2, 0, 0.2, 0)
 mine.Font = Enum.Font.SourceSansBold
-mine.Text = "—" -- Дефис
-mine.TextColor3 = Color3.fromRGB(200, 200, 200)
+mine.Text = "-"
+mine.TextColor3 = Color3.fromRGB(255, 255, 255)
 mine.TextScaled = true
 mine.TextSize = 14.000
 mine.TextWrapped = true
-mine.CornerRadius = UDim.new(0, 6)
 
 speed.Name = "speed"
 speed.Parent = Frame
-speed.BackgroundColor3 = Color3.fromRGB(45, 45, 45) -- Темнее, чтобы выделялось
-speed.Position = UDim2.new(0.32, 0, 0.70, 0) -- Изменена позиция
-speed.Size = UDim2.new(0.36, 0, 0.2, 0) -- Изменен размер
+speed.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+speed.Position = UDim2.new(0.25, 0, 0.75, 0)
+speed.Size = UDim2.new(0.5, 0, 0.2, 0)
 speed.Font = Enum.Font.SourceSansBold
 speed.Text = "1"
-speed.TextColor3 = Color3.fromRGB(200, 200, 200)
+speed.TextColor3 = Color3.fromRGB(255, 255, 255)
 speed.TextScaled = true
 speed.TextSize = 14.000
 speed.TextWrapped = true
-speed.CornerRadius = UDim.new(0, 6)
 
 speeds = 1
 
@@ -156,7 +150,7 @@ nowe = false
 tpwalking = false
 
 game:GetService("StarterGui"):SetCore("SendNotification", {
-	Title = "FLY GUI"; -- Сокращенный заголовок
+	Title = "ttthe_happy"; -- Меняем заголовок уведомления
 	Text = "BY XNEO";
 	Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150"})
 Duration = 5;
@@ -164,7 +158,7 @@ Duration = 5;
 onof.MouseButton1Down:connect(function()
 	if nowe == true then
 		nowe = false
-		onof.Text = "FLY (OFF)" -- ENG
+		onof.Text = "FLY (ВЫКЛ)"
 		onof.BackgroundColor3 = Color3.fromRGB(50, 150, 220) -- Цвет выключенного состояния
 		
 		tpwalking = false
@@ -192,7 +186,7 @@ onof.MouseButton1Down:connect(function()
 		speaker.Character.Humanoid:ChangeState(Enum.HumanoidStateType.RunningNoPhysics)
 	else
 		nowe = true
-		onof.Text = "FLY (ON)" -- ENG
+		onof.Text = "FLY (ВКЛ)"
 		onof.BackgroundColor3 = Color3.fromRGB(80, 200, 80) -- Цвет включенного состояния
 		
 		for i = 1, speeds do
@@ -437,9 +431,9 @@ mini.MouseButton1Click:Connect(function()
 	mini.Visible = false
 	mini2.Visible = true
 	Frame.BackgroundTransparency = 1
-	closebutton.Position = UDim2.new(1, -25, 0, 0)
-	mini2.Position = UDim2.new(1, -50, 0, 0)
-	Frame.Size = UDim2.new(0, 180, 0, 25) -- Изменена высота при сворачивании
+	closebutton.Position = UDim2.new(1, -30, 0, 0)
+	mini2.Position = UDim2.new(1, -60, 0, 0)
+	Frame.Size = UDim2.new(0, 250, 0, 30)
 end)
 
 mini2.MouseButton1Click:Connect(function()
@@ -452,7 +446,7 @@ mini2.MouseButton1Click:Connect(function()
 	mini.Visible = true
 	mini2.Visible = false
 	Frame.BackgroundTransparency = 0
-	closebutton.Position = UDim2.new(1, -25, 0, 0)
-	mini2.Position = UDim2.new(1, -50, 0, 0)
-	Frame.Size = UDim2.new(0, 180, 0, 150) -- Возвращаем высоту при разворачивании
+	closebutton.Position = UDim2.new(1, -30, 0, 0)
+	mini2.Position = UDim2.new(1, -60, 0, 0)
+	Frame.Size = UDim2.new(0, 250, 0, 150)
 end)
