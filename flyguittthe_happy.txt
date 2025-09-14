@@ -1,6 +1,7 @@
 --[[
-	Оригинальный скрипт с новым, улучшенным визуалом.
-	Логика полностью сохранена.
+	Этот скрипт объединяет:
+	1. Работающую логику из вашего первого скрипта.
+	2. Улучшенный визуал из второго скрипта.
 ]]
 
 local main = Instance.new("ScreenGui")
@@ -145,9 +146,8 @@ local chr = game.Players.LocalPlayer.Character
 local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
 nowe = false
 tpwalking = false
-isFlyingWithBodymoers = false
 
-game:GetService("StarterGui"):SetCore("SendNotification", { 
+game:GetService("StarterGui"):SetCore("SendNotification", {
 	Title = "FLY GUI V3";
 	Text = "BY XNEO";
 	Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150"})
@@ -158,10 +158,14 @@ onof.MouseButton1Down:connect(function()
 		nowe = false
 		onof.Text = "FLY (ВЫКЛ)"
 		onof.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-		
-		tpwalking = false
-		isFlyingWithBodymoers = false
 
+		tpwalking = false
+		for _, v in ipairs(speaker.Character:GetChildren()) do
+			if v:IsA("BodyGyro") or v:IsA("BodyVelocity") then
+				v:Destroy()
+			end
+		end
+		
 		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,true)
 		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,true)
 		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying,true)
@@ -178,24 +182,14 @@ onof.MouseButton1Down:connect(function()
 		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics,true)
 		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming,true)
 		speaker.Character.Humanoid:ChangeState(Enum.HumanoidStateType.RunningNoPhysics)
-		
-		for _, v in ipairs(speaker.Character:GetChildren()) do
-			if v:IsA("BodyGyro") or v:IsA("BodyVelocity") then
-				v:Destroy()
-			end
-		end
-
 	else
 		nowe = true
 		onof.Text = "FLY (ВКЛ)"
 		onof.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
-		
-		tpwalking = true
-		isFlyingWithBodymoers = true
 
 		for i = 1, speeds do
 			spawn(function()
-				local hb = game:GetService("RunService").Heartbeat	
+				local hb = game:GetService("RunService").Heartbeat
 				local chr = game.Players.LocalPlayer.Character
 				local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
 				while tpwalking and hb:Wait() and chr and hum and hum.Parent do
@@ -213,7 +207,7 @@ onof.MouseButton1Down:connect(function()
 		for i,v in next, Hum:GetPlayingAnimationTracks() do
 			v:AdjustSpeed(0)
 		end
-		
+
 		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,false)
 		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,false)
 		speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying,false)
@@ -250,7 +244,7 @@ onof.MouseButton1Down:connect(function()
 			if nowe == true then
 				plr.Character.Humanoid.PlatformStand = true
 			end
-			while isFlyingWithBodymoers == true and game:GetService("Players").LocalPlayer.Character.Humanoid.Health > 0 do
+			while nowe == true or game:GetService("Players").LocalPlayer.Character.Humanoid.Health == 0 do
 				game:GetService("RunService").RenderStepped:Wait()
 				if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
 					speed = speed+.5+(speed/maxspeed)
@@ -300,7 +294,7 @@ onof.MouseButton1Down:connect(function()
 			if nowe == true then
 				plr.Character.Humanoid.PlatformStand = true
 			end
-			while isFlyingWithBodymoers == true and game:GetService("Players").LocalPlayer.Character.Humanoid.Health > 0 do
+			while nowe == true or game:GetService("Players").LocalPlayer.Character.Humanoid.Health == 0 do
 				wait()
 				if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
 					speed = speed+.5+(speed/maxspeed)
@@ -380,7 +374,7 @@ plus.MouseButton1Down:connect(function()
 		tpwalking = false
 		for i = 1, speeds do
 			spawn(function()
-				local hb = game:GetService("RunService").Heartbeat	
+				local hb = game:GetService("RunService").Heartbeat
 				tpwalking = true
 				local chr = game.Players.LocalPlayer.Character
 				local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
@@ -406,7 +400,7 @@ mine.MouseButton1Down:connect(function()
 			tpwalking = false
 			for i = 1, speeds do
 				spawn(function()
-					local hb = game:GetService("RunService").Heartbeat	
+					local hb = game:GetService("RunService").Heartbeat
 					tpwalking = true
 					local chr = game.Players.LocalPlayer.Character
 					local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
