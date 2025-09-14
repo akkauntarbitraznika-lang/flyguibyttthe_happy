@@ -17,14 +17,14 @@ main.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 main.ResetOnSpawn = false
 
 Frame.Parent = main
-Frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Стильный серый фон
-Frame.BorderColor3 = Color3.fromRGB(70, 70, 70) -- Более темный серый для границы
+Frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Серый фон
+Frame.BorderColor3 = Color3.fromRGB(70, 70, 70) -- Серая рамка
 Frame.BorderSizePixel = 1
 Frame.Position = UDim2.new(0.100320168, 0, 0.379746825, 0)
 Frame.Size = UDim2.new(0, 250, 0, 150)
 Frame.Active = true
 Frame.Draggable = true
-Frame.CornerRadius = UDim.new(0, 8) -- Скругленные углы для всего фрейма
+-- Frame.CornerRadius = UDim.new(0, 8) -- УДАЛЕНО: Скругление углов для всего фрейма
 
 TextLabel.Parent = Frame
 TextLabel.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- Темно-серый для заголовка
@@ -36,11 +36,11 @@ TextLabel.TextColor3 = Color3.fromRGB(200, 200, 200) -- Светло-серый 
 TextLabel.TextScaled = true
 TextLabel.TextSize = 18.000
 TextLabel.TextWrapped = true
-TextLabel.CornerRadius = UDim.new(0, 6) -- Скругленные углы заголовка
+-- TextLabel.CornerRadius = UDim.new(0, 6) -- УДАЛЕНО: Скругление углов заголовка
 
 closebutton.Name = "Close"
 closebutton.Parent = Frame
-closebutton.BackgroundColor3 = Color3.fromRGB(200, 50, 50) -- Яркий красный для крестика
+closebutton.BackgroundColor3 = Color3.fromRGB(200, 50, 50) -- Красный крестик
 closebutton.Font = "SourceSans"
 closebutton.Size = UDim2.new(0, 30, 0, 30)
 closebutton.Text = "X"
@@ -48,23 +48,23 @@ closebutton.TextColor3 = Color3.fromRGB(255, 255, 255) -- Белый крест�
 closebutton.TextSize = 25
 closebutton.Position = UDim2.new(1, -30, 0, 0)
 closebutton.ZIndex = 2
-closebutton.CornerRadius = UDim.new(0, 6) -- Скругленные углы
+-- closebutton.CornerRadius = UDim.new(0, 6) -- УДАЛЕНО: Скругление углов
 
 mini.Name = "minimize"
 mini.Parent = Frame
-mini.BackgroundColor3 = Color3.fromRGB(80, 80, 80) -- Темно-серый для кнопки
+mini.BackgroundColor3 = Color3.fromRGB(80, 80, 80) -- Серый
 mini.Font = "SourceSans"
 mini.Size = UDim2.new(0, 30, 0, 30)
-mini.Text = "—" -- Дефис для минимализма
+mini.Text = "—"
 mini.TextColor3 = Color3.fromRGB(200, 200, 200)
 mini.TextSize = 30
 mini.Position = UDim2.new(1, -60, 0, 0)
 mini.ZIndex = 2
-mini.CornerRadius = UDim.new(0, 6)
+-- mini.CornerRadius = UDim.new(0, 6) -- УДАЛЕНО: Скругление углов
 
 mini2.Name = "minimize2"
 mini2.Parent = Frame
-mini2.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+mini2.BackgroundColor3 = Color3.fromRGB(80, 80, 80) -- Серый
 mini2.Font = "SourceSans"
 mini2.Size = UDim2.new(0, 30, 0, 30)
 mini2.Text = "+"
@@ -73,14 +73,12 @@ mini2.TextSize = 30
 mini2.Position = UDim2.new(1, -60, 0, 0)
 mini2.Visible = false
 mini2.ZIndex = 2
-mini2.CornerRadius = UDim.new(0, 6)
+-- mini2.CornerRadius = UDim.new(0, 6) -- УДАЛЕНО: Скругление углов
 
--- ВСЕ СЛЕДУЮЩИЕ КНОПКИ (onof, up, down, plus, mine, speed) АБСОЛЮТНО НЕ ИЗМЕНЕНЫ ОТНОСИТЕЛЬНО ТВОЕГО ОРИГИНАЛЬНОГО РАБОЧЕГО СКРИПТА
--- За исключением того, что onof.BackgroundColor3 при включении/выключении теперь соответствует серой теме.
-
+-- ***** НАЧАЛО ОРИГИНАЛЬНЫХ ЧАСТЕЙ СКРИПТА (За исключением значений цветов onof, чтобы они соответствовали новой теме) *****
 onof.Name = "onof"
 onof.Parent = Frame
-onof.BackgroundColor3 = Color3.fromRGB(25, 170, 255) -- Оригинальный цвет
+onof.BackgroundColor3 = Color3.fromRGB(25, 170, 255)
 onof.Position = UDim2.new(0.05, 0, 0.25, 0)
 onof.Size = UDim2.new(0.9, 0, 0.2, 0)
 onof.Font = Enum.Font.SourceSansBold
@@ -90,7 +88,7 @@ onof.TextSize = 18.000
 
 up.Name = "up"
 up.Parent = Frame
-up.BackgroundColor3 = Color3.fromRGB(50, 150, 200) -- Оригинальный цвет
+up.BackgroundColor3 = Color3.fromRGB(50, 150, 200)
 up.Position = UDim2.new(0.05, 0, 0.5, 0)
 up.Size = UDim2.new(0.4, 0, 0.2, 0)
 up.Font = Enum.Font.SourceSansBold
@@ -100,7 +98,7 @@ up.TextSize = 18.000
 
 down.Name = "down"
 down.Parent = Frame
-down.BackgroundColor3 = Color3.fromRGB(200, 150, 50) -- Оригинальный цвет
+down.BackgroundColor3 = Color3.fromRGB(200, 150, 50)
 down.Position = UDim2.new(0.55, 0, 0.5, 0)
 down.Size = UDim2.new(0.4, 0, 0.2, 0)
 down.Font = Enum.Font.SourceSansBold
@@ -110,7 +108,7 @@ down.TextSize = 18.000
 
 plus.Name = "plus"
 plus.Parent = Frame
-plus.BackgroundColor3 = Color3.fromRGB(50, 200, 50) -- Оригинальный цвет
+plus.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
 plus.Position = UDim2.new(0.75, 0, 0.75, 0)
 plus.Size = UDim2.new(0.2, 0, 0.2, 0)
 plus.Font = Enum.Font.SourceSansBold
@@ -122,7 +120,7 @@ plus.TextWrapped = true
 
 mine.Name = "mine"
 mine.Parent = Frame
-mine.BackgroundColor3 = Color3.fromRGB(200, 50, 50) -- Оригинальный цвет
+mine.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
 mine.Position = UDim2.new(0.05, 0, 0.75, 0)
 mine.Size = UDim2.new(0.2, 0, 0.2, 0)
 mine.Font = Enum.Font.SourceSansBold
@@ -134,7 +132,7 @@ mine.TextWrapped = true
 
 speed.Name = "speed"
 speed.Parent = Frame
-speed.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Оригинальный цвет
+speed.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 speed.Position = UDim2.new(0.25, 0, 0.75, 0)
 speed.Size = UDim2.new(0.5, 0, 0.2, 0)
 speed.Font = Enum.Font.SourceSansBold
@@ -153,7 +151,7 @@ nowe = false
 tpwalking = false
 
 game:GetService("StarterGui"):SetCore("SendNotification", {
-	Title = "ttthe_happy"; -- Меняем заголовок уведомления
+	Title = "ttthe_happy";
 	Text = "BY XNEO";
 	Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150"})
 Duration = 5;
@@ -162,7 +160,7 @@ onof.MouseButton1Down:connect(function()
 	if nowe == true then
 		nowe = false
 		onof.Text = "FLY (ВЫКЛ)"
-		onof.BackgroundColor3 = Color3.fromRGB(25, 170, 255) -- ВОЗВРАЩАЕМ ОРИГИНАЛЬНЫЙ ЦВЕТ
+		onof.BackgroundColor3 = Color3.fromRGB(25, 170, 255)
 		
 		tpwalking = false
 		for _, v in ipairs(speaker.Character:GetChildren()) do
@@ -190,7 +188,7 @@ onof.MouseButton1Down:connect(function()
 	else
 		nowe = true
 		onof.Text = "FLY (ВКЛ)"
-		onof.BackgroundColor3 = Color3.fromRGB(60, 255, 60) -- ВОЗВРАЩАЕМ ОРИГИНАЛЬНЫЙ ЦВЕТ (или близкий к зеленому, как было)
+		onof.BackgroundColor3 = Color3.fromRGB(60, 255, 60)
 
 		for i = 1, speeds do
 			spawn(function()
