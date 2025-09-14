@@ -152,7 +152,7 @@ tpwalking = false
 
 game:GetService("StarterGui"):SetCore("SendNotification", {
 	Title = "ttthe_happy";
-	Text = "BY XNEO";
+	Text = "BY TTTHE_HAPPY";
 	Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150"})
 Duration = 5;
 
@@ -468,3 +468,4 @@ mini2.MouseButton1Click:Connect(function()
 	mini2.Position = UDim2.new(1, -60, 0, 0)
 	Frame.Size = UDim2.new(0, 250, 0, 150)
 end)
+
