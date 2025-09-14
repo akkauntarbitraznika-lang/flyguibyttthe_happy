@@ -157,6 +157,7 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
 Duration = 5;
 
 local flightThreads = {} -- Таблица для хранения запущенных потоков полета
+local flightBodyMoverThread = nil -- Для управления потоком BodyGyro/BodyVelocity
 
 local function stopFlight()
     nowe = false
@@ -206,6 +207,12 @@ local function stopFlight()
         end
     end
     flightThreads = {} -- Очищаем список потоков
+
+    -- Останавливаем поток BodyMover, если он активен
+    if flightBodyMoverThread and coroutine.status(flightBodyMoverThread) ~= "dead" then
+        coroutine.yield(flightBodyMoverThread)
+    end
+    flightBodyMoverThread = nil
 end
 
 local function startFlight()
@@ -240,117 +247,124 @@ local function startFlight()
     speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming,false)
     speaker.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
 
-    local function runFlightLogic()
+    -- Логика передвижения, зависящая от Hum.MoveDirection
+    local function runMoveDirectionFlight()
         local hb = game:GetService("RunService").Heartbeat
         local chr = game.Players.LocalPlayer.Character
         local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
         while tpwalking and hb:Wait() and chr and hum and hum.Parent do
             if hum.MoveDirection.Magnitude > 0 then
-                chr:TranslateBy(hum.MoveDirection * speeds) -- Умножаем на скорость
+                chr:TranslateBy(hum.MoveDirection * speeds) -- Умножаем на speeds
             end
         end
     end
-
     -- Запускаем сопрограмму для передвижения
-    table.insert(flightThreads, coroutine.create(runFlightLogic))
+    table.insert(flightThreads, coroutine.create(runMoveDirectionFlight))
     coroutine.resume(flightThreads[#flightThreads])
 
     -- Оригинальная логика полета (BodyGyro/BodyVelocity)
-    if game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid").RigType == Enum.HumanoidRigType.R6 then
-        local plr = game.Players.LocalPlayer
-        local torso = plr.Character.Torso
-        local flying = true
-        local deb = true
-        local ctrl = {f = 0, b = 0, l = 0, r = 0}
-        local lastctrl = {f = 0, b = 0, l = 0, r = 0}
-        local maxspeed = 50
-        local currentFlightSpeed = 0 -- Изменено, чтобы не конфликтовать с "speeds"
-        local bg = Instance.new("BodyGyro", torso)
-        bg.P = 9e4
-        bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-        bg.cframe = torso.CFrame
-        local bv = Instance.new("BodyVelocity", torso)
-        bv.velocity = Vector3.new(0,0.1,0)
-        bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
-        if nowe == true then
-            plr.Character.Humanoid.PlatformStand = true
-        end
-        while nowe == true and plr.Character and plr.Character.Humanoid and plr.Character.Humanoid.Health > 0 do -- Проверяем nowe и здоровье
-            game:GetService("RunService").RenderStepped:Wait()
-            if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
-                currentFlightSpeed = currentFlightSpeed+.5+(currentFlightSpeed/maxspeed)
-                if currentFlightSpeed > maxspeed then
-                    currentFlightSpeed = maxspeed
-                end
-            elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and currentFlightSpeed ~= 0 then
-                currentFlightSpeed = currentFlightSpeed-1
-                if currentFlightSpeed < 0 then
-                    currentFlightSpeed = 0
-                end
+    local function runBodyMoverFlight()
+        if game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid").RigType == Enum.HumanoidRigType.R6 then
+            local plr = game.Players.LocalPlayer
+            local torso = plr.Character.Torso
+            local flying = true
+            local deb = true
+            local ctrl = {f = 0, b = 0, l = 0, r = 0}
+            local lastctrl = {f = 0, b = 0, l = 0, r = 0}
+            local maxspeed = 50 * speeds -- Масштабируем maxspeed по speeds
+            local currentFlightSpeed = 0 
+            local bg = Instance.new("BodyGyro", torso)
+            bg.P = 9e4
+            bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+            bg.cframe = torso.CFrame
+            local bv = Instance.new("BodyVelocity", torso)
+            bv.velocity = Vector3.new(0,0.1,0)
+            bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+            if nowe == true then
+                plr.Character.Humanoid.PlatformStand = true
             end
-            if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
-                bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f+ctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*currentFlightSpeed
-                lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
-            elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and currentFlightSpeed ~= 0 then
-                bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*currentFlightSpeed
-            else
-                bv.velocity = Vector3.new(0,0,0)
-            end
-            bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*currentFlightSpeed/maxspeed),0,0)
-        end
-        -- Cleanup
-        if bg and bg.Parent then bg:Destroy() end
-        if bv and bv.Parent then bv:Destroy() end
-        plr.Character.Humanoid.PlatformStand = false
-        game.Players.LocalPlayer.Character.Animate.Disabled = false
-    else -- R15
-        local plr = game.Players.LocalPlayer
-        local UpperTorso = plr.Character.UpperTorso
-        local flying = true
-        local deb = true
-        local ctrl = {f = 0, b = 0, l = 0, r = 0}
-        local lastctrl = {f = 0, b = 0, l = 0, r = 0}
-        local maxspeed = 50
-        local currentFlightSpeed = 0 -- Изменено, чтобы не конфликтовать с "speeds"
-        local bg = Instance.new("BodyGyro", UpperTorso)
-        bg.P = 9e4
-        bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-        bg.cframe = UpperTorso.CFrame
-        local bv = Instance.new("BodyVelocity", UpperTorso)
-        bv.velocity = Vector3.new(0,0.1,0)
-        bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
-        if nowe == true then
-            plr.Character.Humanoid.PlatformStand = true
-        end
-        while nowe == true and plr.Character and plr.Character.Humanoid and plr.Character.Humanoid.Health > 0 do -- Проверяем nowe и здоровье
-            wait()
-            if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
-                currentFlightSpeed = currentFlightSpeed+.5+(currentFlightSpeed/maxspeed)
-                if currentFlightSpeed > maxspeed then
-                    currentFlightSpeed = maxspeed
+            while nowe == true and plr.Character and plr.Character.Humanoid and plr.Character.Humanoid.Health > 0 do
+                game:GetService("RunService").RenderStepped:Wait()
+                maxspeed = 50 * speeds -- Обновляем maxspeed в цикле
+                if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
+                    currentFlightSpeed = currentFlightSpeed+.5+(currentFlightSpeed/maxspeed)
+                    if currentFlightSpeed > maxspeed then
+                        currentFlightSpeed = maxspeed
+                    end
+                elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and currentFlightSpeed ~= 0 then
+                    currentFlightSpeed = currentFlightSpeed-1
+                    if currentFlightSpeed < 0 then
+                        currentFlightSpeed = 0
+                    end
                 end
-            elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and currentFlightSpeed ~= 0 then
-                currentFlightSpeed = currentFlightSpeed-1
-                if currentFlightSpeed < 0 then
-                    currentFlightSpeed = 0
+                if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
+                    bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f+ctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*currentFlightSpeed
+                    lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
+                elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and currentFlightSpeed ~= 0 then
+                    bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*currentFlightSpeed
+                else
+                    bv.velocity = Vector3.new(0,0,0)
                 end
+                bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*currentFlightSpeed/maxspeed),0,0)
             end
-            if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
-                bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f+ctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*currentFlightSpeed
-                lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
-            elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and currentFlightSpeed ~= 0 then
-                bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*currentFlightSpeed
-            else
-                bv.velocity = Vector3.new(0,0,0)
+            -- Cleanup
+            if bg and bg.Parent then bg:Destroy() end
+            if bv and bv.Parent then bv:Destroy() end
+            plr.Character.Humanoid.PlatformStand = false
+            game.Players.LocalPlayer.Character.Animate.Disabled = false
+        else -- R15
+            local plr = game.Players.LocalPlayer
+            local UpperTorso = plr.Character.UpperTorso
+            local flying = true
+            local deb = true
+            local ctrl = {f = 0, b = 0, l = 0, r = 0}
+            local lastctrl = {f = 0, b = 0, l = 0, r = 0}
+            local maxspeed = 50 * speeds -- Масштабируем maxspeed по speeds
+            local currentFlightSpeed = 0 
+            local bg = Instance.new("BodyGyro", UpperTorso)
+            bg.P = 9e4
+            bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+            bg.cframe = UpperTorso.CFrame
+            local bv = Instance.new("BodyVelocity", UpperTorso)
+            bv.velocity = Vector3.new(0,0.1,0)
+            bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+            if nowe == true then
+                plr.Character.Humanoid.PlatformStand = true
             end
-            bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*currentFlightSpeed/maxspeed),0,0)
+            while nowe == true and plr.Character and plr.Character.Humanoid and plr.Character.Humanoid.Health > 0 do
+                wait()
+                maxspeed = 50 * speeds -- Обновляем maxspeed в цикле
+                if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
+                    currentFlightSpeed = currentFlightSpeed+.5+(currentFlightSpeed/maxspeed)
+                    if currentFlightSpeed > maxspeed then
+                        currentFlightSpeed = maxspeed
+                    end
+                elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and currentFlightSpeed ~= 0 then
+                    currentFlightSpeed = currentFlightSpeed-1
+                    if currentFlightSpeed < 0 then
+                        currentFlightSpeed = 0
+                    end
+                end
+                if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
+                    bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f+ctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*currentFlightSpeed
+                    lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
+                elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and currentFlightSpeed ~= 0 then
+                    bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*currentFlightSpeed
+                else
+                    bv.velocity = Vector3.new(0,0,0)
+                end
+                bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*currentFlightSpeed/maxspeed),0,0)
+            end
+            -- Cleanup
+            if bg and bg.Parent then bg:Destroy() end
+            if bv and bv.Parent then bv:Destroy() end
+            plr.Character.Humanoid.PlatformStand = false
+            game.Players.LocalPlayer.Character.Animate.Disabled = false
         end
-        -- Cleanup
-        if bg and bg.Parent then bg:Destroy() end
-        if bv and bv.Parent then bv:Destroy() end
-        plr.Character.Humanoid.PlatformStand = false
-        game.Players.LocalPlayer.Character.Animate.Disabled = false
     end
+    -- Запускаем сопрограмму для BodyMover
+    flightBodyMoverThread = coroutine.create(runBodyMoverFlight)
+    coroutine.resume(flightBodyMoverThread)
 end
 
 onof.MouseButton1Down:connect(function()
@@ -364,16 +378,25 @@ end)
 -- Это нужно, чтобы в начале, если игрок уже мертв (например, при тестировании),
 -- избежать ошибок, связанных с отсутствием Humanoid.
 game.Players.LocalPlayer.CharacterAdded:Connect(function(char)
-	char:WaitForChild("Humanoid").Died:Connect(function()
+	local hum = char:WaitForChild("Humanoid")
+    hum.Died:Connect(function()
         stopFlight()
     end)
 	wait(0.7)
-	game.Players.LocalPlayer.Character.Humanoid.PlatformStand = false
-	game.Players.LocalPlayer.Character.Animate.Disabled = false
+	hum.PlatformStand = false
+	char.Animate.Disabled = false
     -- При появлении нового персонажа, если полет был активен, возобновляем его
     if nowe then
-        stopFlight() -- Сначала очистим, если что-то осталось от старого персонажа
-        startFlight()
+        -- Не нужно останавливать и запускать заново, просто убедимся, что все ссылки обновлены
+        -- startFlight()
+        -- Чтобы избежать дублирования BodyMovers, если логика не полностью очистилась.
+        -- Однако, поскольку BodyMovers создаются внутри runBodyMoverFlight,
+        -- достаточно просто убедиться, что flightBodyMoverThread корректно перезапускается
+        -- (если он был остановлен из-за смерти) или просто продолжает работать.
+        -- Если BodyMovers уже существуют, то runBodyMoverFlight не должна их дублировать.
+        -- Лучше просто проверить, активен ли полет, и если да, то перезапустить его (после очистки).
+        stopFlight() -- Гарантированная очистка старых BodyMovers
+        startFlight() -- Запуск с новыми
     end
 end)
 
@@ -382,7 +405,8 @@ up.MouseButton1Down:connect(function()
 	tis = up.MouseEnter:connect(function()
 		while tis do
 			wait()
-			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0,speeds,0) -- Умножаем на speeds
+			-- Используем текущее значение speeds
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0,speeds,0) 
 		end
 	end)
 end)
@@ -398,7 +422,8 @@ down.MouseButton1Down:connect(function()
 	dis = down.MouseEnter:connect(function()
 		while dis do
 			wait()
-			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0,-speeds,0) -- Умножаем на speeds
+			-- Используем текущее значение speeds
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0,-speeds,0) 
 		end
 	end)
 end)
@@ -413,60 +438,9 @@ end)
 plus.MouseButton1Down:connect(function()
 	speeds = speeds + 1
 	speed.Text = speeds
-	-- Если полет активен, перезапускаем его логику с новой скоростью
-	if nowe then
-		stopFlight()
-		startFlight()
-	end
-end)
-
-mine.MouseButton1Down:connect(function()
-	if speeds == 1 then
-		speed.Text = 'cannot be less than 1'
-		wait(1)
-		speed.Text = speeds
-	else
-		speeds = speeds - 1
-		speed.Text = speeds
-		-- Если полет активен, перезапускаем его логику с новой скоростью
-		if nowe then
-			stopFlight()
-			startFlight()
-		end
-	end
-end)
-
-closebutton.MouseButton1Click:Connect(function()
-	stopFlight() -- Убедимся, что полет остановлен при закрытии
-	main:Destroy()
-end)
-
-mini.MouseButton1Click:Connect(function()
-	up.Visible = false
-	down.Visible = false
-	onof.Visible = false
-	plus.Visible = false
-	speed.Visible = false
-	mine.Visible = false
-	mini.Visible = false
-	mini2.Visible = true
-	Frame.BackgroundTransparency = 1
-	closebutton.Position = UDim2.new(1, -30, 0, 0)
-	mini2.Position = UDim2.new(1, -60, 0, 0)
-	Frame.Size = UDim2.new(0, 250, 0, 30)
-end)
-
-mini2.MouseButton1Click:Connect(function()
-	up.Visible = true
-	down.Visible = true
-	onof.Visible = true
-	plus.Visible = true
-	speed.Visible = true
-	mine.Visible = true
-	mini.Visible = true
-	mini2.Visible = false
-	Frame.BackgroundTransparency = 0
-	closebutton.Position = UDim2.new(1, -30, 0, 0)
-	mini2.Position = UDim2.new(1, -60, 0, 0)
-	Frame.Size = UDim2.new(0, 250, 0, 150)
-end)
+	-- Теперь не нужно перезапускать весь полет, так как логика внутри циклов Heartbeat/wait
+	-- будет использовать обновленное значение `speeds` на следующем шаге.
+	-- Однако, для BodyMover логики нужно обновить `maxspeed`
+	-- ИЛИ перезапустить BodyMover поток, если он активно работает.
+	-- Для простоты, если вы хотите, чтобы `BodyMover` сразу реагировал,
+	-- мы можем сделать его 
